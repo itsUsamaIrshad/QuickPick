@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+h1,h2,h3,h4,h5,h6,p, span
+{
+  font-family: "Poppins", serif;
+}
+
+a.active hr
+{
+    display: block;
+}
+
+*{
+    font-family: Outfit;
+}
+
+.prata-regular {
+    font-family: "Prata", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+
+
+  @media(max-width:640px)
+  {
+    a.active
+    {
+        background-color: black;
+        color: white;
+    }
+  }
+
+
+
+  ::-webkit-scrollbar
+  {
+    display: none;
+  }
+  
+  /* Define styles for various screen sizes */
+.container {
+  padding-left: 4px; /* default padding */
+  padding-right: 4px; /* default padding */
+}
+
+/* For small screens (sm) */
+@media (min-width: 640px) {
+  .container {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+}
+
+/* For medium screens (md) */
+@media (min-width: 768px) {
+  .container {
+    padding-left: 7vw;
+    padding-right: 7vw;
+  }
+}
+
+/* For large screens (lg) */
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 9vw;
+    padding-right: 9vw;
+  }
+}
+
+
