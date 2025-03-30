@@ -53,7 +53,7 @@ const onSubmitHandler =  async(event)=>
       items: orderItems,
       amount:getCartAmount()+delivery_fee,
     }
-    console.log(`${backend_Url}/api/order/place`)
+    
 
     switch(method)
     {

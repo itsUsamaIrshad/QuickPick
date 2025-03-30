@@ -1,121 +1,233 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
-import { assets } from '../assests/assets/frontend_assets/assets'
-import RelatedProduct from './RelatedProduct'
+import {  Heart, Share2, Star, Truck, Check, Shield } from 'lucide-react'
+import RelatedProducts from './RelatedProduct'
 
 const Product = () => {
-  
+  const { productId } = useParams()
+  const { products, currency, addToCart } = useContext(ShopContext)
+  const [productData, setProductData] = useState(null)
+  const [mainImage, setMainImage] = useState('')
+  const [selectedSize, setSelectedSize] = useState('')
+  const [quantity, setQuantity] = useState(1)
+  const [activeTab, setActiveTab] = useState('description')
+  const [isWishlisted, setIsWishlisted] = useState(false)
 
-  const {productId} = useParams()
-  const {products , currency ,  addToCart} = useContext(ShopContext)
-  const [productData , setProductData] = useState(null)
-  const [image , setImage] = useState('')
-   const [size ,  setSizes] = useState('')
+  useEffect(() => {
+    const product = products.find(item => item._id === productId)
+    if (product) {
+      setProductData(product)
+      setMainImage(product.image[0])
+    }
+  }, [productId, products])
 
- 
+  if (!productData) return <div className="min-h-screen"></div>
 
+  return (
+    <div className="bg-white">
+      {/* Breadcrumb Navigation */}
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex items-center text-sm text-gray-500">
+          <Link to="/" className="hover:text-primary">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <Link to={`/category/${productData.category}`} className="hover:text-primary">
+            {productData.category}
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-gray-900">{productData.name}</span>
+        </div>
+      </nav>
 
-  const fetchProductData = () =>
-  {
-    products.map((item)=>
-    {
-      if(item._id === productId)
-      {
-        setProductData(item)
-        //  console.log(productData)
-        setImage(item.image[0])
-        return 
-      }
-    })
-  }
+      {/* Main Product Section */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-12">
+          {/* Image Gallery */}
+          <div className="mb-8 lg:mb-0">
+            <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-50 mb-4">
+              <img
+                src={mainImage}
+                alt={productData.name}
+                className="h-full w-full object-contain transition-opacity duration-300"
+              />
+              <div className="absolute top-4 right-4 flex space-x-2">
+                <button 
+                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  className={`p-2 rounded-full backdrop-blur-sm ${isWishlisted ? 'text-red-500' : 'text-gray-700 bg-white/80'}`}
+                >
+                  <Heart className="h-5 w-5" fill={isWishlisted ? 'currentColor' : 'none'} />
+                </button>
+                <button className="p-2 rounded-full bg-white/80 backdrop-blur-sm text-gray-700">
+                  <Share2 className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 gap-3">
+              {productData.image.map((img, index) => (
+                <button
+                  key={index}
+                  onClick={() => setMainImage(img)}
+                  className={`aspect-square overflow-hidden rounded-lg border-2 ${mainImage === img ? 'border-primary' : 'border-transparent'}`}
+                >
+                  <img
+                    src={img}
+                    alt={`${productData.name} thumbnail ${index}`}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
 
-  console.log(productData)
+          {/* Product Info */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{productData.name}</h1>
+            
+            <div className="flex items-center mb-4">
+              <div className="flex text-yellow-400">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className="h-5 w-5" 
+                    fill={i < 4 ? 'currentColor' : 'none'} 
+                  />
+                ))}
+              </div>
+              <span className="ml-2 text-sm text-gray-500">(122 reviews)</span>
+            </div>
 
+            <div className="mb-6">
+              <span className="text-3xl font-bold text-gray-900">
+                {currency}{productData.price.toLocaleString()}
+              </span>
+              {productData.oldPrice && (
+                <span className="ml-2 text-lg text-gray-400 line-through">
+                  {currency}{productData.oldPrice.toLocaleString()}
+                </span>
+              )}
+            </div>
 
-  useEffect(()=>
-  {
-    fetchProductData()
-  },[productId , products])
+            <p className="text-gray-700 mb-8">{productData.description}</p>
 
+            {/* Size Selection */}
+            <div className="mb-8">
+              <h3 className="text-sm font-medium text-gray-900 mb-3">Select Size</h3>
+              <div className="flex flex-wrap gap-2">
+                {productData.sizes.map((size, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-4 py-2 border rounded-md text-sm font-medium transition-colors ${selectedSize === size ? 'border-primary bg-primary/10 text-primary' : 'border-gray-300 hover:border-gray-400'}`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-  return productData ? (
-    <>
-    <div className=' px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
+            {/* Quantity and Add to Cart */}
+            <div className="mb-8">
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center border rounded-md">
+                  <button 
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="px-3 py-2 text-gray-600 hover:text-gray-900"
+                  >
+                    -
+                  </button>
+                  <span className="px-3 py-2 border-x">{quantity}</span>
+                  <button 
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="px-3 py-2 text-gray-600 hover:text-gray-900"
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  onClick={() => addToCart(productData._id, selectedSize, quantity)}
+                  disabled={!selectedSize}
+                  className={`flex-1 py-3 px-6 rounded-md font-medium text-white transition-colors ${!selectedSize ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-800'}`}
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
 
-    <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
+            {/* Delivery & Returns */}
+            <div className="border-t border-b border-gray-200 py-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex items-center">
+                  <Truck className="h-5 w-5 text-gray-500 mr-2" />
+                  <span className="text-sm text-gray-700">Free shipping</span>
+                </div>
+                <div className="flex items-center">
+                  <Check className="h-5 w-5 text-gray-500 mr-2" />
+                  <span className="text-sm text-gray-700">100% Original</span>
+                </div>
+                <div className="flex items-center">
+                  <Shield className="h-5 w-5 text-gray-500 mr-2" />
+                  <span className="text-sm text-gray-700">7-day returns</span>
+                </div>
+              </div>
+            </div>
 
-{/* Product Data */}
+            {/* Product Meta */}
+            <div className="text-sm text-gray-500 space-y-1">
+              <p>Category: <span className="text-gray-900">{productData.category}</span></p>
+              <p>SKU: <span className="text-gray-900">{productData._id.slice(0, 8)}</span></p>
+            </div>
+          </div>
+        </div>
 
-<div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
-  <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full">
-    {productData.image.map((item , index)=>(
-      <img src={item} key={index} className=' w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' onClick={()=>setImage(item)}/>
-    ))}
-  </div>
-  
-  <div className=' w-full sm:w-[80%]'>
-    <img src={image} className='w-full h-auto' alt="" />
-  </div>
+        {/* Tabs Section */}
+        <div className="mt-16">
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8">
+              <button
+                onClick={() => setActiveTab('description')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'description' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              >
+                Description
+              </button>
+              <button
+                onClick={() => setActiveTab('reviews')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'reviews' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              >
+                Reviews (122)
+              </button>
+            </nav>
+          </div>
+          <div className="py-8">
+            {activeTab === 'description' ? (
+              <div className="prose max-w-none">
+                <p className="text-gray-700 mb-4">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque, maiores ducimus quod corrupti harum explicabo delectus veritatis earum in optio quia nam eveniet laboriosam providen Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                </p>
+                <p className="text-gray-700">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem eveniet nulla quod mollitia quos ipsum? Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit atque itaque repellat non!
+                </p>
+              </div>
+            ) : (
+              <div className="text-gray-700">
+                {/* Reviews content would go here */}
+                <p>Reviews section coming soon</p>
+              </div>
+            )}
+          </div>
+        </div>
 
-<div>
-  <h1 className=' font-medium text-2xl mt-2'>{productData.name}</h1>
-  <div className="flex items-center gap-1 mt-2">
-    <img src={assets.star_icon} className='w-3 5' alt="" />
-    <img src={assets.star_icon} className='w-3 5' alt="" />
-    <img src={assets.star_icon} className='w-3 5' alt="" />
-    <img src={assets.star_icon} className='w-3 5' alt="" />
-    <img src={assets.star_dull_icon} className='w-3 5' alt="" />
-    <p className=' pl-2'>(122)</p>
-  </div>
-  <p className="mt-3 text-3xl font-medium">{currency}{productData.price}</p>
-  <p className="mt-5 text-gray-500 md:w-4/5">{productData.description}</p>
-  <div className="flex flex-col gap-4 my-8">
-    <p>Select Sizes</p>
-    <div className=' flex gap-2'>
-      {productData.sizes.map((item , index)=>
-      (
-        <button key={index} onClick={()=>setSizes(item)} className={` border py-2 px-4 bg-gray-100 ${item===size ? 'border-orange-500':''} `}>{item}</button>
-      ))}
+        {/* Related Products */}
+        <RelatedProducts 
+          category={productData.category} 
+          subCategory={productData.subCategory} 
+          currentProductId={productData._id}
+        />
+      </div>
     </div>
-  </div>
-  <button className=' bg-black text-white px-8 py-3 text-sm active:bg-gray-700' onClick={()=>addToCart(productData._id,size)}>ADD TO CART</button>
-
-
-  
-  <hr  className=' mt-8 sm:w-4/5'/>
-  <div className="text-sm text-gray-500 mt-5 flex-col gap-1">
-    <p>100% Original product.</p>
-    <p>Cash on delivery is available on this product</p>
-    <p>Easy Return and exchange policy wihtin 7 days.</p>
-  </div>
-</div>
-
-    </div>
-
-    {/* Description and Review Section */}
-    <div className="mt-20">
-      <div className="flex">
-        <b className="border px-5 py-3 text-sm">Description</b>
-        <p className="border px-5 py-3 text-sm">Review (122)</p>
-      </div>
-      <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque, maiores ducimus quod corrupti harum explicabo delectus veritatis earum in optio quia nam eveniet laboriosam providen Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quas perferendis veritatis harum amet culpa voluptatum numquam vero neque, maiores veniam blanditiis consequuntur, consectetur voluptatem facilis.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem eveniet nulla quod mollitia quos ipsum? Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit atque itaque repellat non! Cum voluptas dolore ea minus iste officiis perspiciatis quas dolorum accusamus sunt.</p>
-      </div>
-    </div>
-
-    {/* Display related Product */}
-
-    <RelatedProduct category={productData.category} subCategory={productData.subCategory} />
-    
-      </div>
-      </div>
-    </>
   )
-  : <div className=' opacity-0'></div>
 }
 
 export default Product
-
-

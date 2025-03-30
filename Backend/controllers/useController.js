@@ -41,6 +41,8 @@ const loginUser = async(req,res)=>
 // Route for user Register
 
 // JWT Token Generation Function
+
+
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET);  
 };

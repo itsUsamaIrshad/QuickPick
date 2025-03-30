@@ -12,7 +12,7 @@ const Collection = () => {
   const [showFilter , setShowFilter] = useState(false)
   const [filterProduct , setFilterProduct] = useState([])
   const [category , setCategory] = useState([])
-  // const [SubCategory , setSubCategory] = useState([])
+   const [SubCategory , setSubCategory] = useState([])
 const [sortType, setSortType] = useState('relevant')
   
   
@@ -28,17 +28,17 @@ const [sortType, setSortType] = useState('relevant')
     }
   }
 
-  // const SubToggleCategory = (e)=>
-  //   {
-  //     if(SubCategory.includes(e.target.value))
-  //     {
-  //       setSubCategory(prev=>prev.filter(item => item !== e.target.value))
-  //     }
-  //     else
-  //     {
-  //       setSubCategory(prev=>[...prev,e.target.value])
-  //     }
-  //   }
+  const SubToggleCategory = (e)=>
+    {
+      if(SubCategory.includes(e.target.value))
+      {
+        setSubCategory(prev=>prev.filter(item => item !== e.target.value))
+      }
+      else
+      {
+        setSubCategory(prev=>[...prev,e.target.value])
+      }
+    }
 
   
 
@@ -56,10 +56,10 @@ const applyFilter = () =>
     productsCopy = productsCopy.filter(item=>category.includes(item.category))
   }
   
-  // if(SubCategory.length > 0)
-  //   {
-  //     productsCopy = productsCopy.filter((item) => SubCategory.includes(item.subCategory))
-  //   }
+  if(SubCategory.length > 0)
+    {
+      productsCopy = productsCopy.filter((item) => SubCategory.includes(item.subCategory))
+    }
     setFilterProduct(productsCopy)
 }
 
@@ -91,8 +91,8 @@ break
   {
     applyFilter()
     
-  // },[category , SubCategory , search , showSearch , products])
-    },[category , search , showSearch , products])
+  },[category , SubCategory , search , showSearch , products])
+  
 
 
   useEffect(()=>
@@ -131,9 +131,9 @@ break
 </div>
 
 
-{/* SubCategory Filter */}
 
-{/* <div className={` border border-gray-300 pl-5   py-3 mt-6 ${showFilter?'':'hidden'} sm:block`}>
+
+ <div className={` border border-gray-300 pl-5   py-3 mt-6 ${showFilter?'':'hidden'} sm:block`}>
 <p className=' mb-3 text-sm font-medium'>Type
   
 </p>
@@ -149,7 +149,7 @@ break
   </p>
 </div>
 
-</div> */}
+</div> 
 
 </div>
 
