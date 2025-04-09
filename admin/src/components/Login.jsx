@@ -20,7 +20,7 @@ const Login = ({setToken}) => {
       {
         setToken(response.data.token)
         
-      console.log('Admin Login Successfully')
+      
       }
       else
       {

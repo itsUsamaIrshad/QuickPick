@@ -13,7 +13,6 @@ const adminAuth = async (req,res,next)=>
 
         const token_decode = jwt.verify(token,process.env.JWT_SECRET);
 console.log(token_decode)
-// console.log(process.env.ADMIN_EMAIL + token_decode)
 
 
 
